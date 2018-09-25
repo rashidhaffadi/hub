@@ -4,8 +4,9 @@
 set -eo pipefail
 
 APP_HOME=/opt/hub
-APP_JAR=$(ls ${APP_HOME}/lib/hub-*)
-CLASSPATH=${APP_JAR}:${APP_HOME}/lib/*
+APP_LIB=${APP_HOME}/lib
+APP_JAR=$(ls ${APP_LIB}/hub-*)
+CLASSPATH=${APP_JAR}:${APP_LIB}/*
 CONFIG_DIR=/etc/hub
 # LOG_DIR also exists in logback.xml
 LOG_DIR=/mnt/log
@@ -50,7 +51,8 @@ JAVA_OPTS="
  -Dsun.net.inetaddr.ttl=0
  -Xloggc:${LOG_DIR}/gc.log-$(date -u '+%Y-%m-%d-%H-%M-%S')
  -Dfile.encoding=UTF-8
- -Dlogback.configurationFile=${CONFIG_DIR}/logback.xml"
+ -Dlogback.configurationFile=${CONFIG_DIR}/logback.xml
+ -javaagent:${APP_LIB}/dd-java-agent.jar"
 
 CHILDPID=""
 function shutdownChild()
