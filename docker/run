@@ -54,7 +54,7 @@ JAVA_OPTS="
  -Dfile.encoding=UTF-8
  -Dlogback.configurationFile=${CONFIG_DIR}/logback.xml
  -javaagent:${DD_AGENT_JAR}
- -Ddd.service.name:hub"
+ -Ddd.service.name=hub"
 
 CHILDPID=""
 function shutdownChild()
