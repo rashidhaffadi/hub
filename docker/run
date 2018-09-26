@@ -53,7 +53,8 @@ JAVA_OPTS="
  -Xloggc:${LOG_DIR}/gc.log-$(date -u '+%Y-%m-%d-%H-%M-%S')
  -Dfile.encoding=UTF-8
  -Dlogback.configurationFile=${CONFIG_DIR}/logback.xml
- -javaagent:${DD_AGENT_JAR}"
+ -javaagent:${DD_AGENT_JAR}
+ -Ddd.service.name:hub"
 
 CHILDPID=""
 function shutdownChild()
