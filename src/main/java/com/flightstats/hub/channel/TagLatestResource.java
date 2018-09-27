@@ -5,6 +5,7 @@ import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.dao.TagService;
 import com.flightstats.hub.model.*;
 import com.google.common.base.Optional;
+import datadog.trace.api.Trace;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -24,6 +25,7 @@ public class TagLatestResource {
     private ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
     private TagService tagService = HubProvider.getInstance(TagService.class);
 
+    @Trace
     @GET
     public Response getLatest(@PathParam("tag") String tag,
                               @QueryParam("stable") @DefaultValue("true") boolean stable,
@@ -53,6 +55,7 @@ public class TagLatestResource {
                 .build();
     }
 
+    @Trace
     @GET
     @Path("/{count}")
     @Produces(MediaType.APPLICATION_JSON)

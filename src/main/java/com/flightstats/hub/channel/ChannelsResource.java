@@ -7,6 +7,7 @@ import com.flightstats.hub.exception.ConflictException;
 import com.flightstats.hub.exception.InvalidRequestException;
 import com.flightstats.hub.model.ChannelConfig;
 import com.flightstats.hub.rest.Linked;
+import datadog.trace.api.Trace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,7 @@ public class ChannelsResource {
 
     private final static ChannelService channelService = HubProvider.getInstance(ChannelService.class);
 
+    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getChannels() {
@@ -47,6 +49,7 @@ public class ChannelsResource {
         return Response.ok(result).build();
     }
 
+    @Trace
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

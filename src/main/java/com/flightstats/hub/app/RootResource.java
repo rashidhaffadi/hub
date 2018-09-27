@@ -1,6 +1,7 @@
 package com.flightstats.hub.app;
 
 import com.flightstats.hub.rest.Linked;
+import datadog.trace.api.Trace;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.UriInfo;
 @Path("/")
 public class RootResource {
 
+    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getChannels(@Context UriInfo uriInfo) {

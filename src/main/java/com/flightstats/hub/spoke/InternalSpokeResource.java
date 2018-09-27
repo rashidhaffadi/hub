@@ -3,6 +3,7 @@ package com.flightstats.hub.spoke;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.model.SingleTrace;
 import com.google.common.io.ByteStreams;
+import datadog.trace.api.Trace;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ public class InternalSpokeResource {
     @Context
     private UriInfo uriInfo;
 
+    @Trace
     @GET
     @Path("/{storeName}/payload/{path:.+}")
     public Response getPayload(@PathParam("storeName") String storeName,
@@ -47,6 +49,7 @@ public class InternalSpokeResource {
         }
     }
 
+    @Trace
     @PUT
     @Path("/{storeName}/payload/{path:.+}")
     public Response putPayload(@PathParam("storeName") String storeName,
@@ -75,6 +78,7 @@ public class InternalSpokeResource {
         }
     }
 
+    @Trace
     @Path("{storeName}/bulkKey/{channel}")
     @PUT
     public Response putBulk(@PathParam("storeName") String storeName,
@@ -144,6 +148,7 @@ public class InternalSpokeResource {
         }
     }
 
+    @Trace
     @GET
     @Path("/{storeName}/time/{C}/{Y}/{M}/{day}")
     public Response getTimeBucket(@PathParam("storeName") String storeName,
@@ -155,6 +160,7 @@ public class InternalSpokeResource {
         return getResponse(store, C + "/" + Y + "/" + M + "/" + day);
     }
 
+    @Trace
     @GET
     @Path("/{storeName}/time/{C}/{Y}/{M}/{D}/{hour}")
     public Response getTimeBucket(@PathParam("storeName") String storeName,
@@ -167,6 +173,7 @@ public class InternalSpokeResource {
         return getResponse(store, C + "/" + Y + "/" + M + "/" + D + "/" + hour);
     }
 
+    @Trace
     @GET
     @Path("/{storeName}/time/{C}/{Y}/{M}/{D}/{h}/{minute}")
     public Response getTimeBucket(@PathParam("storeName") String storeName,
@@ -180,6 +187,7 @@ public class InternalSpokeResource {
         return getResponse(store, C + "/" + Y + "/" + M + "/" + D + "/" + h + "/" + minute);
     }
 
+    @Trace
     @GET
     @Path("/{storeName}/time/{C}/{Y}/{M}/{D}/{h}/{m}/{second}")
     public Response getTimeBucket(@PathParam("storeName") String storeName,
@@ -194,6 +202,7 @@ public class InternalSpokeResource {
         return getResponse(store, C + "/" + Y + "/" + M + "/" + D + "/" + h + "/" + m + "/" + second);
     }
 
+    @Trace
     @DELETE
     @Path("/{storeName}/payload/{path:.+}")
     public Response delete(@PathParam("storeName") String storeName,
@@ -208,6 +217,7 @@ public class InternalSpokeResource {
         }
     }
 
+    @Trace
     @Path("/latest/{channel}/{path:.+}")
     @GET
     public Response getLatest(@PathParam("channel") String channel, @PathParam("path") String path) {
@@ -223,6 +233,7 @@ public class InternalSpokeResource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
+    @Trace
     @Path("/next/{channel}/{count}/{startKey:.+}")
     @GET
     public Response getNext(@PathParam("channel") String channel, @PathParam("count") int count,
@@ -240,6 +251,7 @@ public class InternalSpokeResource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
+    @Trace
     @Path("/test/{server}")
     @GET
     public Response test(@PathParam("server") String server) {

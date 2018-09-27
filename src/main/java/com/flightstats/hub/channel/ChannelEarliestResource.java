@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.dao.ChannelService;
 import com.flightstats.hub.model.*;
+import datadog.trace.api.Trace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,7 @@ public class ChannelEarliestResource {
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
     private final static ChannelService channelService = HubProvider.getInstance(ChannelService.class);
 
+    @Trace
     @GET
     public Response getEarliest(@PathParam("channel") String channel,
                                 @QueryParam("stable") @DefaultValue("true") boolean stable,
@@ -52,6 +54,7 @@ public class ChannelEarliestResource {
         }
     }
 
+    @Trace
     @GET
     @Path("/{count}")
     @Produces({MediaType.APPLICATION_JSON, "multipart/*", "application/zip"})

@@ -18,6 +18,7 @@ import com.flightstats.hub.rest.PATCH;
 import com.flightstats.hub.time.NtpMonitor;
 import com.flightstats.hub.util.Sleeper;
 import com.google.common.base.Optional;
+import datadog.trace.api.Trace;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.SseFeature;
@@ -53,6 +54,7 @@ public class ChannelResource {
     private final static NtpMonitor ntpMonitor = HubProvider.getInstance(NtpMonitor.class);
     private final static EventsService eventsService = HubProvider.getInstance(EventsService.class);
 
+    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getChannelMetadata(@PathParam("channel") String channelName,
@@ -68,6 +70,7 @@ public class ChannelResource {
         return Response.ok(output).build();
     }
 
+    @Trace
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -87,6 +90,7 @@ public class ChannelResource {
         return Response.created(channelUri).entity(output).build();
     }
 
+    @Trace
     @PATCH
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -106,6 +110,7 @@ public class ChannelResource {
         return Response.ok(channelUri).entity(output).build();
     }
 
+    @Trace
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response insertValue(@PathParam("channel") String channelName,
@@ -157,6 +162,7 @@ public class ChannelResource {
         }
     }
 
+    @Trace
     @POST
     @Consumes("multipart/*")
     @Produces(MediaType.APPLICATION_JSON)
@@ -167,6 +173,7 @@ public class ChannelResource {
         return insertBulk(channelName, contentType, data);
     }
 
+    @Trace
     @POST
     @Consumes("multipart/*")
     @Produces(MediaType.APPLICATION_JSON)
@@ -210,6 +217,7 @@ public class ChannelResource {
         }
     }
 
+    @Trace
     @GET
     @Path("/events")
     @Produces(SseFeature.SERVER_SENT_EVENTS)
@@ -236,6 +244,7 @@ public class ChannelResource {
         }
     }
 
+    @Trace
     @DELETE
     public Response delete(@PathParam("channel") final String channelName) throws Exception {
         ChannelConfig channelConfig = channelService.getChannelConfig(channelName, false);

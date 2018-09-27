@@ -10,6 +10,7 @@ import com.flightstats.hub.rest.Linked;
 import com.flightstats.hub.util.RequestUtils;
 import com.flightstats.hub.util.TimeUtil;
 import com.google.common.base.Optional;
+import datadog.trace.api.Trace;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ public class WebhookResource {
     @Context
     private UriInfo uriInfo;
 
+    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWebhooks() {
@@ -74,6 +76,7 @@ public class WebhookResource {
         return links;
     }
 
+    @Trace
     @Path("/{name}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -152,6 +155,7 @@ public class WebhookResource {
         return builder.build();
     }
 
+    @Trace
     @Path("/{name}/errors")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -177,6 +181,7 @@ public class WebhookResource {
         addErrors(status, oneNode);
     }
 
+    @Trace
     @Path("/{name}/lastCompleted")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -202,6 +207,7 @@ public class WebhookResource {
         addLatest(status, oneNode);
     }
 
+    @Trace
     @Path("/{name}")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
@@ -221,6 +227,7 @@ public class WebhookResource {
         }
     }
 
+    @Trace
     @Path("/{name}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
@@ -239,6 +246,7 @@ public class WebhookResource {
         return Response.status(Response.Status.ACCEPTED).build();
     }
 
+    @Trace
     @Path("/{name}/updateCursor")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)

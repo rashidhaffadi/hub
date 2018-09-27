@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.dao.TagService;
 import com.flightstats.hub.model.*;
+import datadog.trace.api.Trace;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -25,6 +26,7 @@ public class TagEarliestResource {
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
     private final static TagService tagService = HubProvider.getInstance(TagService.class);
 
+    @Trace
     @GET
     public Response getEarliest(@PathParam("tag") String tag,
                                 @QueryParam("stable") @DefaultValue("true") boolean stable,
@@ -54,6 +56,7 @@ public class TagEarliestResource {
                 .build();
     }
 
+    @Trace
     @GET
     @Path("/{count}")
     @Produces(MediaType.APPLICATION_JSON)
