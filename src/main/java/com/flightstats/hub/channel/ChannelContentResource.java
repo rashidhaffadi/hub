@@ -24,6 +24,7 @@ import com.google.common.io.ByteStreams;
 import com.sun.jersey.core.header.MediaTypes;
 import datadog.trace.api.Trace;
 import io.opentracing.Scope;
+import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.sse.EventOutput;
@@ -55,6 +56,8 @@ public class ChannelContentResource {
 
     @Context
     private UriInfo uriInfo;
+
+    private final Tracer tracer = GlobalTracer.get();
 
     private final static TagContentResource tagContentResource = HubProvider.getInstance(TagContentResource.class);
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
@@ -324,7 +327,7 @@ public class ChannelContentResource {
                             @HeaderParam("X-Item-Length-Required") @DefaultValue("false") boolean itemLengthRequired,
                             @QueryParam("remoteOnly") @DefaultValue("false") boolean remoteOnly
     ) throws Exception {
-        try (Scope scope = GlobalTracer.get().buildSpan("channel_content_resource.get_by_hash").startActive(true)) {
+        try (Scope scope = tracer.buildSpan("channel_content_resource.get_by_hash").startActive(true)) {
             long start = System.currentTimeMillis();
             scope.span().setTag("channel", channel);
             ContentKey key = new ContentKey(year, month, day, hour, minute, second, millis, hash);
