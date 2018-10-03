@@ -23,6 +23,8 @@ import com.google.inject.name.Named;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
+import io.opentracing.Scope;
+import io.opentracing.Tracer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +51,15 @@ public class RemoteSpokeStore {
 
     private final CuratorCluster cluster;
     private final MetricsService metricsService;
+    private final Tracer tracer;
     private final ExecutorService executorService;
     private final int stableSeconds = HubProperties.getProperty("app.stable_seconds", 5);
 
     @Inject
-    public RemoteSpokeStore(@Named("SpokeCuratorCluster") CuratorCluster cluster, MetricsService metricsService) {
+    public RemoteSpokeStore(@Named("SpokeCuratorCluster") CuratorCluster cluster, MetricsService metricsService, Tracer tracer) {
         this.cluster = cluster;
         this.metricsService = metricsService;
+        this.tracer = tracer;
         executorService = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("RemoteSpokeStore-%d").build());
     }
 
@@ -124,49 +128,51 @@ public class RemoteSpokeStore {
         return insert(spokeStore, path, payload, cluster.getWriteServers(), ActiveTraces.getLocal(), spokeApi, channel);
     }
 
-    public boolean insert(SpokeStore spokeStore, String path, byte[] payload, Collection<String> servers, Traces traces,
-                          String spokeApi, String channel) {
-        int quorum = getQuorum(servers.size());
-        CountDownLatch quorumLatch = new CountDownLatch(quorum);
-        AtomicBoolean firstComplete = new AtomicBoolean();
-        for (final String server : servers) {
-            executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    setThread(path);
-                    String uri = HubHost.getScheme() + server + "/internal/spoke/" + spokeStore + "/" + spokeApi + "/" + path;
-                    traces.add(uri);
-                    ClientResponse response = null;
-                    try {
-                        response = write_client.resource(uri).put(ClientResponse.class, payload);
-                        traces.add(server, response.getEntity(String.class));
-                        if (response.getStatus() == 201) {
-                            if (firstComplete.compareAndSet(false, true)) {
-                                metricsService.time(channel, "heisenberg", traces.getStart());
+    public boolean insert(SpokeStore spokeStore, String path, byte[] payload, Collection<String> servers, Traces traces, String spokeApi, String channel) {
+        try (Scope scope = tracer.buildSpan("remote_spoke_store.insert").startActive(true)) {
+            scope.span().setTag("store", spokeStore.toString());
+            int quorum = getQuorum(servers.size());
+            CountDownLatch quorumLatch = new CountDownLatch(quorum);
+            AtomicBoolean firstComplete = new AtomicBoolean();
+            for (final String server : servers) {
+                executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        setThread(path);
+                        String uri = HubHost.getScheme() + server + "/internal/spoke/" + spokeStore + "/" + spokeApi + "/" + path;
+                        traces.add(uri);
+                        ClientResponse response = null;
+                        try {
+                            response = write_client.resource(uri).put(ClientResponse.class, payload);
+                            traces.add(server, response.getEntity(String.class));
+                            if (response.getStatus() == 201) {
+                                if (firstComplete.compareAndSet(false, true)) {
+                                    metricsService.time(channel, "heisenberg", traces.getStart());
+                                }
+                                quorumLatch.countDown();
+                                logger.trace("server {} path {} response {}", server, path, response);
+                            } else {
+                                logger.info("write failed: server {} path {} response {}", server, path, response);
                             }
-                            quorumLatch.countDown();
-                            logger.trace("server {} path {} response {}", server, path, response);
-                        } else {
-                            logger.info("write failed: server {} path {} response {}", server, path, response);
+                        } catch (Exception e) {
+                            traces.add(server, e.getMessage());
+                            logger.warn("write failed: " + server + " " + path, e);
+                        } finally {
+                            HubUtils.close(response);
+                            resetThread();
                         }
-                    } catch (Exception e) {
-                        traces.add(server, e.getMessage());
-                        logger.warn("write failed: " + server + " " + path, e);
-                    } finally {
-                        HubUtils.close(response);
-                        resetThread();
-                    }
 
-                }
-            });
+                    }
+                });
+            }
+            try {
+                quorumLatch.await(stableSeconds, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                throw new RuntimeInterruptedException(e);
+            }
+            metricsService.time(channel, "consistent", traces.getStart());
+            return quorumLatch.getCount() != quorum;
         }
-        try {
-            quorumLatch.await(stableSeconds, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeInterruptedException(e);
-        }
-        metricsService.time(channel, "consistent", traces.getStart());
-        return quorumLatch.getCount() != quorum;
     }
 
     private void setThread(String name) {
@@ -184,36 +190,39 @@ public class RemoteSpokeStore {
     }
 
     public Content get(SpokeStore spokeStore, String path, ContentKey key) {
-        Collection<String> servers = cluster.getRandomServers();
-        for (String server : servers) {
-            ClientResponse response = null;
-            try {
-                setThread(path);
-                String url = HubHost.getScheme() + server + "/internal/spoke/" + spokeStore + "/payload/" + path;
-                response = query_client.resource(url).get(ClientResponse.class);
-                logger.trace("server {} path {} response {}", server, path, response);
-                if (response.getStatus() == 200) {
-                    byte[] entity = response.getEntity(byte[].class);
-                    if (entity.length > 0) {
-                        return ContentMarshaller.toContent(entity, key);
+        try (Scope scope = tracer.buildSpan("remote_spoke_store.get").startActive(true)) {
+            scope.span().setTag("store", spokeStore.toString());
+            Collection<String> servers = cluster.getRandomServers();
+            for (String server : servers) {
+                ClientResponse response = null;
+                try {
+                    setThread(path);
+                    String url = HubHost.getScheme() + server + "/internal/spoke/" + spokeStore + "/payload/" + path;
+                    response = query_client.resource(url).get(ClientResponse.class);
+                    logger.trace("server {} path {} response {}", server, path, response);
+                    if (response.getStatus() == 200) {
+                        byte[] entity = response.getEntity(byte[].class);
+                        if (entity.length > 0) {
+                            return ContentMarshaller.toContent(entity, key);
+                        }
                     }
+                } catch (JsonMappingException e) {
+                    logger.info("JsonMappingException for " + path);
+                } catch (ClientHandlerException e) {
+                    if (e.getCause() != null && e.getCause() instanceof ConnectException) {
+                        logger.warn("connection exception " + server);
+                    } else {
+                        logger.warn("unable to get content " + server + " " + path, e);
+                    }
+                } catch (Exception e) {
+                    logger.warn("unable to get content " + path, e);
+                } finally {
+                    HubUtils.close(response);
+                    resetThread();
                 }
-            } catch (JsonMappingException e) {
-                logger.info("JsonMappingException for " + path);
-            } catch (ClientHandlerException e) {
-                if (e.getCause() != null && e.getCause() instanceof ConnectException) {
-                    logger.warn("connection exception " + server);
-                } else {
-                    logger.warn("unable to get content " + server + " " + path, e);
-                }
-            } catch (Exception e) {
-                logger.warn("unable to get content " + path, e);
-            } finally {
-                HubUtils.close(response);
-                resetThread();
             }
+            return null;
         }
-        return null;
     }
 
     QueryResult readTimeBucket(SpokeStore spokeStore, String channel, String timePath) throws InterruptedException {

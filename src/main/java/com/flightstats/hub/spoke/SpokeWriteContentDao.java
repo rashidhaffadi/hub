@@ -12,6 +12,8 @@ import com.flightstats.hub.model.*;
 import com.flightstats.hub.util.TimeUtil;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
+import io.opentracing.Scope;
+import io.opentracing.Tracer;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +35,8 @@ public class SpokeWriteContentDao implements ContentDao {
 
     @Inject
     private RemoteSpokeStore spokeStore;
+    @Inject
+    private Tracer tracer;
 
     @Override
     public ContentKey insert(String channelName, Content content) throws Exception {
@@ -58,16 +62,19 @@ public class SpokeWriteContentDao implements ContentDao {
 
     @Override
     public Content get(String channelName, ContentKey key) {
-        String path = getPath(channelName, key);
-        Traces traces = ActiveTraces.getLocal();
-        traces.add("SpokeWriteContentDao.read");
-        try {
-            return spokeStore.get(SpokeStore.WRITE, path, key);
-        } catch (Exception e) {
-            logger.warn("unable to get data: " + path, e);
-            return null;
-        } finally {
-            traces.add("SpokeWriteContentDao.read completed");
+        try (Scope scope = tracer.buildSpan("spoke_write_content_dao.get").startActive(true)) {
+            String path = getPath(channelName, key);
+            scope.span().setTag("path", path);
+            Traces traces = ActiveTraces.getLocal();
+            traces.add("SpokeWriteContentDao.read");
+            try {
+                return spokeStore.get(SpokeStore.WRITE, path, key);
+            } catch (Exception e) {
+                logger.warn("unable to get data: " + path, e);
+                return null;
+            } finally {
+                traces.add("SpokeWriteContentDao.read completed");
+            }
         }
     }
 
