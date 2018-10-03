@@ -24,7 +24,7 @@ import com.google.common.io.ByteStreams;
 import com.sun.jersey.core.header.MediaTypes;
 import datadog.trace.api.Trace;
 import io.opentracing.Scope;
-import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.SseFeature;
@@ -33,7 +33,6 @@ import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
@@ -53,9 +52,6 @@ public class ChannelContentResource {
     public static final String THREADS = HubProperties.getProperty("s3.large.threads", "3");
 
     private final static Logger logger = LoggerFactory.getLogger(ChannelContentResource.class);
-
-    @Inject
-    private Tracer tracer;
 
     @Context
     private UriInfo uriInfo;
@@ -328,7 +324,7 @@ public class ChannelContentResource {
                             @HeaderParam("X-Item-Length-Required") @DefaultValue("false") boolean itemLengthRequired,
                             @QueryParam("remoteOnly") @DefaultValue("false") boolean remoteOnly
     ) throws Exception {
-        try (Scope scope = tracer.buildSpan("channel_content_resource.get_by_hash").startActive(true)) {
+        try (Scope scope = GlobalTracer.get().buildSpan("channel_content_resource.get_by_hash").startActive(true)) {
             long start = System.currentTimeMillis();
             scope.span().setTag("channel", channel);
             ContentKey key = new ContentKey(year, month, day, hour, minute, second, millis, hash);
