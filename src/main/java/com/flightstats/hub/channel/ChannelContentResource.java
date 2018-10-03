@@ -23,6 +23,8 @@ import com.google.common.base.Optional;
 import com.google.common.io.ByteStreams;
 import com.sun.jersey.core.header.MediaTypes;
 import datadog.trace.api.Trace;
+import io.opentracing.Scope;
+import io.opentracing.Tracer;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.SseFeature;
@@ -31,6 +33,7 @@ import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
@@ -50,6 +53,9 @@ public class ChannelContentResource {
     public static final String THREADS = HubProperties.getProperty("s3.large.threads", "3");
 
     private final static Logger logger = LoggerFactory.getLogger(ChannelContentResource.class);
+
+    @Inject
+    private Tracer tracer;
 
     @Context
     private UriInfo uriInfo;
@@ -307,7 +313,6 @@ public class ChannelContentResource {
         return Response.ok(root).build();
     }
 
-    @Trace
     @Path("/{h}/{m}/{s}/{ms}/{hash}")
     @GET
     public Response getItem(@PathParam("channel") String channel,
@@ -323,62 +328,66 @@ public class ChannelContentResource {
                             @HeaderParam("X-Item-Length-Required") @DefaultValue("false") boolean itemLengthRequired,
                             @QueryParam("remoteOnly") @DefaultValue("false") boolean remoteOnly
     ) throws Exception {
-        long start = System.currentTimeMillis();
-        ContentKey key = new ContentKey(year, month, day, hour, minute, second, millis, hash);
-        ItemRequest itemRequest = ItemRequest.builder()
-                .channel(channel)
-                .key(key)
-                .uri(uriInfo.getRequestUri())
-                .remoteOnly(remoteOnly)
-                .build();
-        Optional<Content> optionalResult = channelService.get(itemRequest);
+        try (Scope scope = tracer.buildSpan("channel_content_resource.get_by_hash").startActive(true)) {
+            long start = System.currentTimeMillis();
+            scope.span().setTag("channel", channel);
+            ContentKey key = new ContentKey(year, month, day, hour, minute, second, millis, hash);
+            scope.span().setTag("content_key", key.toUrl());
+            ItemRequest itemRequest = ItemRequest.builder()
+                    .channel(channel)
+                    .key(key)
+                    .uri(uriInfo.getRequestUri())
+                    .remoteOnly(remoteOnly)
+                    .build();
+            Optional<Content> optionalResult = channelService.get(itemRequest);
 
-        if (!optionalResult.isPresent()) {
-            logger.warn("404 content not found {} {}", channel, key);
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-        }
-        Content content = optionalResult.get();
-
-        MediaType actualContentType = getContentType(content);
-
-        if (contentTypeIsNotCompatible(accept, actualContentType)) {
-            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
-        }
-
-        Response.ResponseBuilder builder = Response.ok((StreamingOutput) output -> {
-            try {
-                ByteStreams.copy(content.getStream(), output);
-            } catch (IOException e) {
-                logger.warn("issue streaming content " + channel + " " + key, e);
-                throw e;
-            } finally {
-                content.close();
+            if (!optionalResult.isPresent()) {
+                logger.warn("404 content not found {} {}", channel, key);
+                throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
-        });
+            Content content = optionalResult.get();
 
-        if (content.isLarge()) {
-            builder.header("X-LargeItem", "true");
-        }
-        builder.type(actualContentType)
-                .header(CREATION_DATE, FORMATTER.print(new DateTime(key.getMillis())));
+            MediaType actualContentType = getContentType(content);
 
-        builder.header("Link", "<" + uriInfo.getRequestUriBuilder().path("previous").build() + ">;rel=\"" + "previous" + "\"");
-        builder.header("Link", "<" + uriInfo.getRequestUriBuilder().path("next").build() + ">;rel=\"" + "next" + "\"");
+            if (contentTypeIsNotCompatible(accept, actualContentType)) {
+                return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+            }
 
-        long itemLength = content.getSize();
-        if (itemLength == -1 && itemLengthRequired) {
+            Response.ResponseBuilder builder = Response.ok((StreamingOutput) output -> {
+                try {
+                    ByteStreams.copy(content.getStream(), output);
+                } catch (IOException e) {
+                    logger.warn("issue streaming content " + channel + " " + key, e);
+                    throw e;
+                } finally {
+                    content.close();
+                }
+            });
+
             if (content.isLarge()) {
-                itemLength = content.getSize();
-            } else {
-                byte[] bytes = ContentMarshaller.toBytes(content);
-                itemLength = bytes.length;
+                builder.header("X-LargeItem", "true");
             }
+            builder.type(actualContentType)
+                    .header(CREATION_DATE, FORMATTER.print(new DateTime(key.getMillis())));
+
+            builder.header("Link", "<" + uriInfo.getRequestUriBuilder().path("previous").build() + ">;rel=\"" + "previous" + "\"");
+            builder.header("Link", "<" + uriInfo.getRequestUriBuilder().path("next").build() + ">;rel=\"" + "next" + "\"");
+
+            long itemLength = content.getSize();
+            if (itemLength == -1 && itemLengthRequired) {
+                if (content.isLarge()) {
+                    itemLength = content.getSize();
+                } else {
+                    byte[] bytes = ContentMarshaller.toBytes(content);
+                    itemLength = bytes.length;
+                }
+            }
+
+            builder.header("X-Item-Length", itemLength);
+
+            metricsService.time(channel, "get", start);
+            return builder.build();
         }
-
-        builder.header("X-Item-Length", itemLength);
-
-        metricsService.time(channel, "get", start);
-        return builder.build();
     }
 
     @Trace

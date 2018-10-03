@@ -19,6 +19,8 @@ import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import io.opentracing.Scope;
+import io.opentracing.Tracer;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,8 @@ public class ChannelService {
     private TimeService timeService;
     @Inject
     private MetricsService metricsService;
+    @Inject
+    private Tracer tracer;
 
     public boolean channelExists(String channelName) {
         return channelConfigDao.exists(channelName);
@@ -246,12 +250,14 @@ public class ChannelService {
     }
 
     public Optional<Content> get(ItemRequest itemRequest) {
-        itemRequest = itemRequest.withChannel(getDisplayName(itemRequest.getChannel()));
-        DateTime limitTime = getChannelLimitTime(itemRequest.getChannel()).minusMinutes(15);
-        if (itemRequest.getKey().getTime().isBefore(limitTime)) {
-            return Optional.absent();
+        try (Scope scope = tracer.buildSpan("channel_service.get").asChildOf(tracer.activeSpan()).startActive(true)) {
+            itemRequest = itemRequest.withChannel(getDisplayName(itemRequest.getChannel()));
+            DateTime limitTime = getChannelLimitTime(itemRequest.getChannel()).minusMinutes(15);
+            if (itemRequest.getKey().getTime().isBefore(limitTime)) {
+                return Optional.absent();
+            }
+            return contentService.get(itemRequest.getChannel(), itemRequest.getKey(), itemRequest.isRemoteOnly());
         }
-        return contentService.get(itemRequest.getChannel(), itemRequest.getKey(), itemRequest.isRemoteOnly());
     }
 
     public ChannelConfig getChannelConfig(String channelName, boolean allowChannelCache) {

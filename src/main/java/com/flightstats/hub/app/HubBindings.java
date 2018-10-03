@@ -33,6 +33,8 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.sun.jersey.api.client.Client;
+import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.ensemble.fixed.FixedEnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
@@ -195,6 +197,12 @@ public class HubBindings extends AbstractModule {
                 .toInstance(new FileSpokeStore(
                         HubProperties.getSpokePath(SpokeStore.READ),
                         HubProperties.getSpokeTtlMinutes(SpokeStore.READ)));
+    }
+
+    @Provides
+    @Singleton
+    public static Tracer buildTracer() {
+        return GlobalTracer.get();
     }
 
 }

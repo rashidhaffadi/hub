@@ -111,6 +111,8 @@ dependencies {
     compile 'com.datadoghq:java-dogstatsd-client:2.4'
     compile 'com.datadoghq:dd-java-agent:0.15.0'
     compile 'com.datadoghq:dd-trace-api:0.15.0'
+    compile 'io.opentracing:opentracing-api:0.31.0'
+    compile 'io.opentracing:opentracing-util:0.31.0'
 
     compile 'com.atlassian.commonmark:commonmark:0.10.0'
 

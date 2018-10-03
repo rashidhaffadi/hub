@@ -17,6 +17,8 @@ import com.google.common.base.Optional;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.opentracing.Scope;
+import io.opentracing.Tracer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,8 @@ public class S3SingleContentDao implements ContentDao {
     private HubS3Client s3Client;
     @Inject
     private S3BucketName s3BucketName;
+    @Inject
+    private Tracer tracer;
 
     public void initialize() {
         s3Client.initialize();
@@ -97,22 +101,24 @@ public class S3SingleContentDao implements ContentDao {
     }
 
     public Content get(final String channelName, final ContentKey key) {
-        ActiveTraces.getLocal().add("S3SingleContentDao.read", key);
-        try {
-            return getS3Object(channelName, key);
-        } catch (SocketTimeoutException e) {
-            logger.warn("SocketTimeoutException : unable to read " + channelName + " " + key);
+        try (Scope scope = tracer.buildSpan("s3_single_content_dao.get").asChildOf(tracer.activeSpan()).startActive(true)) {
+            ActiveTraces.getLocal().add("S3SingleContentDao.read", key);
             try {
                 return getS3Object(channelName, key);
-            } catch (Exception e2) {
-                logger.warn("unable to read second time " + channelName + " " + key + " " + e.getMessage(), e2);
+            } catch (SocketTimeoutException e) {
+                logger.warn("SocketTimeoutException : unable to read " + channelName + " " + key);
+                try {
+                    return getS3Object(channelName, key);
+                } catch (Exception e2) {
+                    logger.warn("unable to read second time " + channelName + " " + key + " " + e.getMessage(), e2);
+                    throw new RuntimeException(e);
+                }
+            } catch (Exception e) {
+                logger.warn("unable to read " + channelName + " " + key, e);
                 throw new RuntimeException(e);
+            } finally {
+                ActiveTraces.getLocal().add("S3SingleContentDao.read completed");
             }
-        } catch (Exception e) {
-            logger.warn("unable to read " + channelName + " " + key, e);
-            throw new RuntimeException(e);
-        } finally {
-            ActiveTraces.getLocal().add("S3SingleContentDao.read completed");
         }
     }
 
