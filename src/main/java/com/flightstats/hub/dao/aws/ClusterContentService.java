@@ -130,7 +130,7 @@ public class ClusterContentService implements ContentService {
 
     @Override
     public Optional<Content> get(String channelName, ContentKey key, boolean remoteOnly) {
-        try (Scope scope = tracer.buildSpan("cluster_content_service.get").asChildOf(tracer.activeSpan()).startActive(true)) {
+        try (Scope scope = tracer.buildSpan("cluster_content_service.get").startActive(true)) {
             logger.trace("fetching {} from channel {} ", key.toString(), channelName);
             ChannelConfig channel = channelService.getCachedChannelConfig(channelName);
             if (!remoteOnly && key.getTime().isAfter(getSpokeTtlTime(channelName))) {

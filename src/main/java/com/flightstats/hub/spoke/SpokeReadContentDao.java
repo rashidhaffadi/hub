@@ -34,7 +34,7 @@ public class SpokeReadContentDao implements ContentDao {
 
     @Override
     public SortedSet<ContentKey> insert(BulkContent bulkContent) throws Exception {
-        try (Scope scope = tracer.buildSpan("spoke_read_content_dao.insert").asChildOf(tracer.activeSpan()).startActive(true)) {
+        try (Scope scope = tracer.buildSpan("spoke_read_content_dao.insert").startActive(true)) {
             return SpokeContentDao.insert(bulkContent, (baos) -> {
                 String channel = bulkContent.getChannel();
                 return spokeStore.insert(SpokeStore.READ, channel, baos.toByteArray(), Cluster.getLocalServer(), ActiveTraces.getLocal(), "bulkKey", channel);
@@ -48,7 +48,7 @@ public class SpokeReadContentDao implements ContentDao {
 
     @Override
     public Content get(String channelName, ContentKey key) {
-        try (Scope scope = tracer.buildSpan("spoke_read_content_dao.get").asChildOf(tracer.activeSpan()).startActive(true)) {
+        try (Scope scope = tracer.buildSpan("spoke_read_content_dao.get").startActive(true)) {
             String path = getPath(channelName, key);
             scope.span().setTag("path", path);
             Traces traces = ActiveTraces.getLocal();

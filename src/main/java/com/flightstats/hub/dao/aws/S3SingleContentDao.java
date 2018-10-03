@@ -101,7 +101,7 @@ public class S3SingleContentDao implements ContentDao {
     }
 
     public Content get(final String channelName, final ContentKey key) {
-        try (Scope scope = tracer.buildSpan("s3_single_content_dao.get").asChildOf(tracer.activeSpan()).startActive(true)) {
+        try (Scope scope = tracer.buildSpan("s3_single_content_dao.get").startActive(true)) {
             ActiveTraces.getLocal().add("S3SingleContentDao.read", key);
             try {
                 return getS3Object(channelName, key);

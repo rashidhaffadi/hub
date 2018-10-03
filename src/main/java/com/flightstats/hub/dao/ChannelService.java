@@ -250,7 +250,7 @@ public class ChannelService {
     }
 
     public Optional<Content> get(ItemRequest itemRequest) {
-        try (Scope scope = tracer.buildSpan("channel_service.get").asChildOf(tracer.activeSpan()).startActive(true)) {
+        try (Scope scope = tracer.buildSpan("channel_service.get").startActive(true)) {
             itemRequest = itemRequest.withChannel(getDisplayName(itemRequest.getChannel()));
             DateTime limitTime = getChannelLimitTime(itemRequest.getChannel()).minusMinutes(15);
             if (itemRequest.getKey().getTime().isBefore(limitTime)) {

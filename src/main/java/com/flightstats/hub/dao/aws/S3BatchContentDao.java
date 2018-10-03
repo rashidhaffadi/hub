@@ -63,7 +63,7 @@ public class S3BatchContentDao implements ContentDao {
 
     @Override
     public Content get(String channelName, ContentKey key) {
-        try (Scope scope = tracer.buildSpan("s3_batch_content_dao.get").asChildOf(tracer.activeSpan()).startActive(true)) {
+        try (Scope scope = tracer.buildSpan("s3_batch_content_dao.get").startActive(true)) {
             try {
                 return getS3Object(channelName, key);
             } catch (SocketTimeoutException | SocketException e) {
