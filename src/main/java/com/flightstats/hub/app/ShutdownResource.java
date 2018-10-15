@@ -1,6 +1,5 @@
 package com.flightstats.hub.app;
 
-
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;

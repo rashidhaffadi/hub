@@ -1,6 +1,5 @@
 package com.flightstats.hub.webhook;
 
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;

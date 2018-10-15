@@ -1,6 +1,5 @@
 package com.flightstats.hub.channel;
 
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
