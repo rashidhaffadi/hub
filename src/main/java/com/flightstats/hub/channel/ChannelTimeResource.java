@@ -2,7 +2,6 @@ package com.flightstats.hub.channel;
 
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.dao.ChannelService;
-import datadog.trace.api.Trace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

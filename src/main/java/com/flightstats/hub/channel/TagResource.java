@@ -3,7 +3,6 @@ package com.flightstats.hub.channel;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.dao.ChannelService;
 import com.flightstats.hub.rest.Linked;
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

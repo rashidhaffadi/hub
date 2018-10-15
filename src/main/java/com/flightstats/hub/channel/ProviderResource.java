@@ -7,7 +7,6 @@ import com.flightstats.hub.model.BulkContent;
 import com.flightstats.hub.model.ChannelConfig;
 import com.flightstats.hub.model.Content;
 import com.flightstats.hub.model.ContentKey;
-import datadog.trace.api.Trace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

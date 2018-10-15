@@ -3,7 +3,6 @@ package com.flightstats.hub.app;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.flightstats.hub.cluster.Cluster;
-import datadog.trace.api.Trace;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.GET;

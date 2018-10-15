@@ -5,7 +5,6 @@ import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.dao.TagService;
 import com.flightstats.hub.model.*;
 import com.google.common.base.Optional;
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

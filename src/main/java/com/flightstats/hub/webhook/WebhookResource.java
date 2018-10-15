@@ -10,7 +10,6 @@ import com.flightstats.hub.rest.Linked;
 import com.flightstats.hub.util.RequestUtils;
 import com.flightstats.hub.util.TimeUtil;
 import com.google.common.base.Optional;
-import datadog.trace.api.Trace;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

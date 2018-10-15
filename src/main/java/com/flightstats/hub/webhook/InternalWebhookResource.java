@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.model.ContentPath;
-import datadog.trace.api.Trace;
 import org.joda.time.DateTime;
 
 import javax.ws.rs.*;

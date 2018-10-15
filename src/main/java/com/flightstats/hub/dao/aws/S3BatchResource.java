@@ -11,7 +11,6 @@ import com.flightstats.hub.model.ContentKey;
 import com.flightstats.hub.model.MinutePath;
 import com.flightstats.hub.rest.RestClient;
 import com.sun.jersey.api.client.ClientResponse;
-import datadog.trace.api.Trace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

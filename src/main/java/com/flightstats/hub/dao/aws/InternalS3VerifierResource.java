@@ -1,7 +1,6 @@
 package com.flightstats.hub.dao.aws;
 
 import com.flightstats.hub.app.HubProvider;
-import datadog.trace.api.Trace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

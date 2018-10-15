@@ -1,7 +1,6 @@
 package com.flightstats.hub.app;
 
 import com.flightstats.hub.rest.Linked;
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

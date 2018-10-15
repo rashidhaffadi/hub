@@ -1,6 +1,5 @@
 package com.flightstats.hub.channel;
 
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

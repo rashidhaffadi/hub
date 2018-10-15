@@ -3,7 +3,6 @@ package com.flightstats.hub.spoke;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.model.SingleTrace;
 import com.google.common.io.ByteStreams;
-import datadog.trace.api.Trace;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

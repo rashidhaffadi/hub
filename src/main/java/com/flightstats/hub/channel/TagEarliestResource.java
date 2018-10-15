@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.dao.TagService;
 import com.flightstats.hub.model.*;
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

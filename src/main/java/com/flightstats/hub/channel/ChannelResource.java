@@ -18,7 +18,6 @@ import com.flightstats.hub.rest.PATCH;
 import com.flightstats.hub.time.NtpMonitor;
 import com.flightstats.hub.util.Sleeper;
 import com.google.common.base.Optional;
-import datadog.trace.api.Trace;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.SseFeature;

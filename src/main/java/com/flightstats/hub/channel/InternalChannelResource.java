@@ -13,7 +13,6 @@ import com.flightstats.hub.model.ContentKey;
 import com.flightstats.hub.util.HubUtils;
 import com.google.common.base.Optional;
 import com.google.inject.TypeLiteral;
-import datadog.trace.api.Trace;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

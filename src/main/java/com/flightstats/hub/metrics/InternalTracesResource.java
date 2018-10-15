@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flightstats.hub.app.HubHost;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.cluster.Cluster;
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

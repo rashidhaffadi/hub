@@ -5,7 +5,6 @@ import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.app.LocalHostOnly;
 import com.flightstats.hub.metrics.InternalTracesResource;
 import com.flightstats.hub.util.TimeUtil;
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;

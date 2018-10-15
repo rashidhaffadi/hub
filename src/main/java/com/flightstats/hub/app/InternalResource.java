@@ -9,7 +9,6 @@ import com.flightstats.hub.metrics.InternalStacktraceResource;
 import com.flightstats.hub.metrics.InternalTracesResource;
 import com.flightstats.hub.time.InternalTimeResource;
 import com.flightstats.hub.webhook.InternalWebhookResource;
-import datadog.trace.api.Trace;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.GET;

@@ -3,7 +3,6 @@ package com.flightstats.hub.channel;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.dao.ChannelService;
 import com.flightstats.hub.dao.DocumentationDao;
-import datadog.trace.api.Trace;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;

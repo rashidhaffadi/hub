@@ -8,7 +8,6 @@ import com.flightstats.hub.cluster.DecommissionManager;
 import com.flightstats.hub.cluster.SpokeDecommissionCluster;
 import com.flightstats.hub.cluster.SpokeDecommissionManager;
 import com.flightstats.hub.rest.Linked;
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

@@ -22,7 +22,6 @@ import com.flightstats.hub.util.TimeUtil;
 import com.google.common.base.Optional;
 import com.google.common.io.ByteStreams;
 import com.sun.jersey.core.header.MediaTypes;
-import datadog.trace.api.Trace;
 import io.opentracing.Scope;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
