@@ -18,14 +18,12 @@ public class GroupResource {
     @Context
     private UriInfo uriInfo;
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getGroups() {
         return WebhookResource.getWebhooks("groups", uriInfo);
     }
 
-    @Trace
     @Path("/{name}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -33,7 +31,6 @@ public class GroupResource {
         return WebhookResource.get(name, uriInfo);
     }
 
-    @Trace
     @Path("/{name}")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
@@ -42,7 +39,6 @@ public class GroupResource {
         return WebhookResource.upsert(name, body, uriInfo);
     }
 
-    @Trace
     @Path("/{name}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)

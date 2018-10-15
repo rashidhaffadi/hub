@@ -30,7 +30,6 @@ public class HealthResource {
     private static final HubHealthCheck healthCheck = HubProvider.getInstance(HubHealthCheck.class);
     private static final HubVersion hubVersion = HubProvider.getInstance(HubVersion.class);
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkHealth() {

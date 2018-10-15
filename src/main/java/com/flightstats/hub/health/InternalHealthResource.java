@@ -26,7 +26,6 @@ public class InternalHealthResource {
     @Context
     private UriInfo uriInfo;
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkHealth(@Context UriInfo uriInfo) {

@@ -30,7 +30,6 @@ public class InternalReplicationResource {
     private static final LastContentPath lastReplicated = HubProvider.getInstance(LastContentPath.class);
     private static final HubUtils hubUtils = HubProvider.getInstance(HubUtils.class);
 
-    @Trace
     @POST
     public Response putPayload(@PathParam("channel") String channel, String data) {
         try {

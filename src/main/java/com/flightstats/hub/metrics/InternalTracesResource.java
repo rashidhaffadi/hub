@@ -32,7 +32,6 @@ public class InternalTracesResource {
         return root;
     }
 
-    @Trace
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response getTraces() {

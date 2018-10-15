@@ -20,7 +20,6 @@ public class MetricsResource {
 
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkHealth() {
@@ -29,7 +28,6 @@ public class MetricsResource {
         return Response.ok(rootNode).build();
     }
 
-    @Trace
     @GET
     @Path("trace")
     @Produces(MediaType.TEXT_PLAIN)

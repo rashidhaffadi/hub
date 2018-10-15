@@ -38,7 +38,6 @@ public class ProviderResource {
         }
     }
 
-    @Trace
     @POST
     @Produces(MediaType.TEXT_PLAIN)
     public Response insertValue(@HeaderParam("channelName") final String channelName,
@@ -65,7 +64,6 @@ public class ProviderResource {
         }
     }
 
-    @Trace
     @POST
     @Consumes("multipart/*")
     @Produces(MediaType.APPLICATION_JSON)

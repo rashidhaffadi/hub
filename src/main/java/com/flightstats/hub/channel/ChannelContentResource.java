@@ -95,7 +95,6 @@ public class ChannelContentResource {
         }
     }
 
-    @Trace
     @Produces({MediaType.APPLICATION_JSON, "multipart/*", "application/zip"})
     @GET
     public Response getDay(@PathParam("channel") String channel,
@@ -115,7 +114,6 @@ public class ChannelContentResource {
         return getTimeQueryResponse(channel, startTime, location, trace, stable, Unit.DAYS, tag, bulk || batch, accept, epoch, Order.isDescending(order));
     }
 
-    @Trace
     @Path("/{hour}")
     @Produces({MediaType.APPLICATION_JSON, "multipart/*", "application/zip"})
     @GET
@@ -137,7 +135,6 @@ public class ChannelContentResource {
         return getTimeQueryResponse(channel, startTime, location, trace, stable, Unit.HOURS, tag, bulk || batch, accept, epoch, Order.isDescending(order));
     }
 
-    @Trace
     @Path("/{h}/{minute}")
     @Produces({MediaType.APPLICATION_JSON, "multipart/*", "application/zip"})
     @GET
@@ -160,7 +157,6 @@ public class ChannelContentResource {
         return getTimeQueryResponse(channel, startTime, location, trace, stable, Unit.MINUTES, tag, bulk || batch, accept, epoch, Order.isDescending(order));
     }
 
-    @Trace
     @Path("/{h}/{m}/{second}")
     @Produces({MediaType.APPLICATION_JSON, "multipart/*", "application/zip"})
     @GET
@@ -236,7 +232,6 @@ public class ChannelContentResource {
         }
     }
 
-    @Trace
     @Path("/{h}/{m}/{second}/{direction:[n|p].*}/{count}")
     @Produces({MediaType.APPLICATION_JSON})
     @GET
@@ -389,7 +384,6 @@ public class ChannelContentResource {
         }
     }
 
-    @Trace
     @Path("/{h}/{m}/{s}/{ms}/{hash}/{direction:[n|p].*}")
     @GET
     public Response getDirection(@PathParam("channel") String channel,
@@ -432,7 +426,6 @@ public class ChannelContentResource {
         return builder.build();
     }
 
-    @Trace
     @GET
     @Path("/{h}/{m}/{s}/{ms}/{hash}/events")
     @Produces(SseFeature.SERVER_SENT_EVENTS)
@@ -463,7 +456,6 @@ public class ChannelContentResource {
         }
     }
 
-    @Trace
     @Path("/{h}/{m}/{s}/{ms}/{hash}/{direction:[n|p].*}/{count}")
     @GET
     @Produces({MediaType.APPLICATION_JSON, "multipart/*", "application/zip"})
@@ -519,7 +511,6 @@ public class ChannelContentResource {
         }
     }
 
-    @Trace
     @Path("/{h}/{m}/{s}/{ms}")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -547,7 +538,6 @@ public class ChannelContentResource {
         return historicalResponse(channelName, content);
     }
 
-    @Trace
     @Path("/{h}/{m}/{s}/{ms}/{hash}")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -614,7 +604,6 @@ public class ChannelContentResource {
         }
     }
 
-    @Trace
     @Path("/{h}/{m}/{s}/{ms}")
     @GET
     public Response getMillis(@PathParam("channel") String channel,
@@ -634,7 +623,6 @@ public class ChannelContentResource {
         return Response.seeOther(builder.build()).build();
     }
 
-    @Trace
     @Path("/{h}/{m}/{s}/{ms}/{hash}")
     @DELETE
     public Response delete(@PathParam("channel") String channel,

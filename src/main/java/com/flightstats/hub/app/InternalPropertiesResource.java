@@ -21,7 +21,6 @@ public class InternalPropertiesResource {
 
     public static final String DESCRIPTION = "Get hub properties with links to other hubs in the cluster.";
 
-    @Trace
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response getTraces() {

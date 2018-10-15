@@ -22,7 +22,6 @@ public class WebSocketResource {
     private static final WebSocketService webSocketService = WebSocketService.getInstance();
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
 
-    @Trace
     @POST
     public Response putPayload(@PathParam("id") String id, String data) {
         logger.trace("incoming {} {}", id, data);

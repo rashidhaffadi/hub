@@ -26,7 +26,6 @@ public class TagEarliestResource {
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
     private final static TagService tagService = HubProvider.getInstance(TagService.class);
 
-    @Trace
     @GET
     public Response getEarliest(@PathParam("tag") String tag,
                                 @QueryParam("stable") @DefaultValue("true") boolean stable,
@@ -56,7 +55,6 @@ public class TagEarliestResource {
                 .build();
     }
 
-    @Trace
     @GET
     @Path("/{count}")
     @Produces(MediaType.APPLICATION_JSON)

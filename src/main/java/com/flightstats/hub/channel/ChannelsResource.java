@@ -36,7 +36,6 @@ public class ChannelsResource {
 
     private final static ChannelService channelService = HubProvider.getInstance(ChannelService.class);
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getChannels() {
@@ -49,7 +48,6 @@ public class ChannelsResource {
         return Response.ok(result).build();
     }
 
-    @Trace
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

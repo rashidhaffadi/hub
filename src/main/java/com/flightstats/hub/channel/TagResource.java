@@ -28,7 +28,6 @@ public class TagResource {
 
     private final static ChannelService channelService = HubProvider.getInstance(ChannelService.class);
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getChannels() {

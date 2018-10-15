@@ -23,7 +23,6 @@ public class InternalEventsResource {
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
     private final static EventsService eventsService = HubProvider.getInstance(EventsService.class);
 
-    @Trace
     @POST
     public Response putPayload(@PathParam("id") String id, String data) {
         logger.trace("incoming {} {}", id, data);

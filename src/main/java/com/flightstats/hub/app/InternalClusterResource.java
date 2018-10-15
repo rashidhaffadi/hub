@@ -34,7 +34,6 @@ public class InternalClusterResource {
     private @Context
     UriInfo uriInfo;
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get() throws Exception {
@@ -71,14 +70,12 @@ public class InternalClusterResource {
         }
     }
 
-    @Trace
     @POST
     @Path("decommission")
     public Response decommission() throws Exception {
         return LocalHostOnly.getResponse(uriInfo, decommissionManager::decommission);
     }
 
-    @Trace
     @POST
     @Path("recommission/{server}")
     public Response recommission(@PathParam("server") String server) throws Exception {

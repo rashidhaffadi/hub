@@ -15,7 +15,6 @@ import javax.ws.rs.core.UriInfo;
 @Path("/")
 public class RootResource {
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getChannels(@Context UriInfo uriInfo) {

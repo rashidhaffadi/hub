@@ -24,7 +24,6 @@ public class InternalStacktraceResource {
     private static final ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
     public static final String DESCRIPTION = "Get a condensed stacktrace with links to other hubs in the cluster.";
 
-    @Trace
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response getTraces() {

@@ -34,14 +34,12 @@ public class InternalZookeeperResource {
     @Context
     private UriInfo uriInfo;
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRoot(@QueryParam("depth") @DefaultValue("1") int depth) {
         return returnData("", depth, 0);
     }
 
-    @Trace
     @GET
     @Path("/{path:.+}")
     @Produces(MediaType.APPLICATION_JSON)

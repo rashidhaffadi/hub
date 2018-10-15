@@ -31,7 +31,6 @@ public class InternalResource {
     private ObjectNode links;
     private String requestUri;
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getChannels() {

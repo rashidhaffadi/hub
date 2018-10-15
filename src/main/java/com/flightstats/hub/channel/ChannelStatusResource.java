@@ -27,7 +27,6 @@ public class ChannelStatusResource {
     private final static HubUtils hubUtils = HubProvider.getInstance(HubUtils.class);
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLatest(@PathParam("channel") String channel,

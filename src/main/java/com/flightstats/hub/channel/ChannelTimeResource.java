@@ -23,7 +23,6 @@ public class ChannelTimeResource {
 
     private final static ChannelService channelService = HubProvider.getInstance(ChannelService.class);
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDefault(@PathParam("channel") String channel) {
@@ -33,28 +32,24 @@ public class ChannelTimeResource {
         return TimeLinkUtil.getDefault(uriInfo);
     }
 
-    @Trace
     @Path("/second")
     @GET
     public Response getSecond(@QueryParam("stable") @DefaultValue("true") boolean stable) {
         return TimeLinkUtil.getSecond(stable, uriInfo);
     }
 
-    @Trace
     @Path("/minute")
     @GET
     public Response getMinute(@QueryParam("stable") @DefaultValue("true") boolean stable) {
         return TimeLinkUtil.getMinute(stable, uriInfo);
     }
 
-    @Trace
     @Path("/hour")
     @GET
     public Response getHour(@QueryParam("stable") @DefaultValue("true") boolean stable) {
         return TimeLinkUtil.getHour(stable, uriInfo);
     }
 
-    @Trace
     @Path("/day")
     @GET
     public Response getDay(@QueryParam("stable") @DefaultValue("true") boolean stable) {

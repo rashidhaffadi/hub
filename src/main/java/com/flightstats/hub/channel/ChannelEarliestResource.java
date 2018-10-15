@@ -32,7 +32,6 @@ public class ChannelEarliestResource {
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
     private final static ChannelService channelService = HubProvider.getInstance(ChannelService.class);
 
-    @Trace
     @GET
     public Response getEarliest(@PathParam("channel") String channel,
                                 @QueryParam("stable") @DefaultValue("true") boolean stable,
@@ -54,7 +53,6 @@ public class ChannelEarliestResource {
         }
     }
 
-    @Trace
     @GET
     @Path("/{count}")
     @Produces({MediaType.APPLICATION_JSON, "multipart/*", "application/zip"})

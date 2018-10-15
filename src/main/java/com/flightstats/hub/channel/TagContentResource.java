@@ -39,7 +39,6 @@ public class TagContentResource {
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
     private final static TagService tagService = HubProvider.getInstance(TagService.class);
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTagLinks(@PathParam("tag") String tag) {
@@ -60,7 +59,6 @@ public class TagContentResource {
         return Response.ok(result).build();
     }
 
-    @Trace
     @Path("/{Y}/{M}/{D}/")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
@@ -80,7 +78,6 @@ public class TagContentResource {
         return getTimeQueryResponse(tag, startTime, location, trace, stable, Unit.DAYS, bulk || batch, accept, uriInfo, epoch, Order.isDescending(order));
     }
 
-    @Trace
     @Path("/{Y}/{M}/{D}/{hour}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
@@ -101,7 +98,6 @@ public class TagContentResource {
         return getTimeQueryResponse(tag, startTime, location, trace, stable, Unit.HOURS, bulk || batch, accept, uriInfo, epoch, Order.isDescending(order));
     }
 
-    @Trace
     @Path("/{Y}/{M}/{D}/{h}/{minute}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
@@ -123,7 +119,6 @@ public class TagContentResource {
         return getTimeQueryResponse(tag, startTime, location, trace, stable, Unit.MINUTES, bulk || batch, accept, uriInfo, epoch, Order.isDescending(order));
     }
 
-    @Trace
     @Path("/{Y}/{M}/{D}/{h}/{m}/{second}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
@@ -194,7 +189,6 @@ public class TagContentResource {
         return Response.ok(root).build();
     }
 
-    @Trace
     @Path("/{Y}/{M}/{D}/{h}/{m}/{s}/{ms}/{hash}")
     @GET
     public Response getValue(@PathParam("tag") String tag,
@@ -238,7 +232,6 @@ public class TagContentResource {
         return builder.build();
     }
 
-    @Trace
     @Path("/{Y}/{M}/{D}/{h}/{m}/{s}/{ms}/{hash}/{direction:[n|p].*}")
     @GET
     public Response getDirection(@PathParam("tag") String tag,
@@ -285,7 +278,6 @@ public class TagContentResource {
         return builder.build();
     }
 
-    @Trace
     @Path("/{Y}/{M}/{D}/{h}/{m}/{s}/{ms}/{hash}/{direction:[n|p].*}/{count}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)

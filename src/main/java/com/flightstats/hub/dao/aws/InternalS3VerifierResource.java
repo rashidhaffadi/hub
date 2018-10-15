@@ -18,7 +18,6 @@ public class InternalS3VerifierResource {
     private final static Logger logger = LoggerFactory.getLogger(InternalS3VerifierResource.class);
     private static final S3Verifier s3Verifier = HubProvider.getInstance(S3Verifier.class);
 
-    @Trace
     @POST
     @Path("/{channel}")
     public Response post(@PathParam("channel") String channel) {

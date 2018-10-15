@@ -53,7 +53,6 @@ public class S3BatchResource {
     /**
      * This gets called back for channels to support S3 batching.
      */
-    @Trace
     @POST
     public Response post(@PathParam("channel") String channel, String data) {
         try {

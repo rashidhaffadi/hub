@@ -24,7 +24,6 @@ public class InternalDeployResource {
 
     private static final Cluster curatorCluster = HubProvider.getInstance(Cluster.class, "HubCluster");
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response deploy(@Context UriInfo uriInfo) {
@@ -36,7 +35,6 @@ public class InternalDeployResource {
         return Response.ok(root).build();
     }
 
-    @Trace
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/text")

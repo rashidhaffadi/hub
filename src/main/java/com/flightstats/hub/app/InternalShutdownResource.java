@@ -25,7 +25,6 @@ public class InternalShutdownResource {
 
     public static final String DESCRIPTION = "See if any server is being shutdown, shutdown a node, and reset the shutdown lock.";
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@Context UriInfo uriInfo) throws Exception {
@@ -46,13 +45,11 @@ public class InternalShutdownResource {
         return Response.ok(links.build()).build();
     }
 
-    @Trace
     @POST
     public Response shutdown(@Context UriInfo uriInfo) throws Exception {
         return LocalHostOnly.getResponse(uriInfo, () -> getManager().shutdown(true));
     }
 
-    @Trace
     @POST
     @Path("resetLock")
     public Response resetLock(@Context UriInfo uriInfo) throws Exception {
