@@ -19,6 +19,8 @@ import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.opentracing.Scope;
+import io.opentracing.Tracer;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +69,8 @@ public class ClusterContentService implements ContentService {
     private S3WriteQueue s3WriteQueue;
     @Inject
     private HubUtils hubUtils;
+    @Inject
+    private Tracer tracer;
 
     private static final ExecutorService executorService = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("ClusterContentService-%d").build());
 
@@ -126,33 +130,38 @@ public class ClusterContentService implements ContentService {
 
     @Override
     public Optional<Content> get(String channelName, ContentKey key, boolean remoteOnly) {
-        logger.trace("fetching {} from channel {} ", key.toString(), channelName);
-        ChannelConfig channel = channelService.getCachedChannelConfig(channelName);
-        if (!remoteOnly && key.getTime().isAfter(getSpokeTtlTime(channelName))) {
-            Content content = spokeWriteContentDao.get(channelName, key);
-            if (content != null) {
-                logger.trace("returning from spoke {} {}", key.toString(), channelName);
-                return checkForLargeIndex(channelName, content);
+        try (Scope scope = tracer.buildSpan("cluster_content_service.get").startActive(true)) {
+            logger.trace("fetching {} from channel {} ", key.toString(), channelName);
+            ChannelConfig channel = channelService.getCachedChannelConfig(channelName);
+            if (!remoteOnly && key.getTime().isAfter(getSpokeTtlTime(channelName))) {
+                Content content = spokeWriteContentDao.get(channelName, key);
+                if (content != null) {
+                    logger.trace("returning from spoke {} {}", key.toString(), channelName);
+                    return checkForLargeIndex(channelName, content);
+                }
             }
-        }
-        Content content;
-        if (channel.isSingle()) {
-            content = s3SingleContentDao.get(channelName, key);
-        } else if (channel.isBatch()) {
-            content = spokeReadContentDao.get(channelName, key);
-            if (content == null) {
-                content = getFromS3BatchAndStoreInReadCache(channelName, key);
-            }
-        } else {
-            content = spokeReadContentDao.get(channelName, key);
-            if (content == null) {
-                content = getFromS3BatchAndStoreInReadCache(channelName, key);
-            }
-            if (content == null) {
+            Content content;
+            if (channel.isSingle()) {
                 content = s3SingleContentDao.get(channelName, key);
+                scope.span().setTag("storage", "single");
+            } else if (channel.isBatch()) {
+                scope.span().setTag("storage", "batch");
+                content = spokeReadContentDao.get(channelName, key);
+                if (content == null) {
+                    content = getFromS3BatchAndStoreInReadCache(channelName, key);
+                }
+            } else {
+                scope.span().setTag("storage", "both");
+                content = spokeReadContentDao.get(channelName, key);
+                if (content == null) {
+                    content = getFromS3BatchAndStoreInReadCache(channelName, key);
+                }
+                if (content == null) {
+                    content = s3SingleContentDao.get(channelName, key);
+                }
             }
+            return checkForLargeIndex(channelName, content);
         }
-        return checkForLargeIndex(channelName, content);
     }
 
     private Content getFromS3BatchAndStoreInReadCache(String channelName, ContentKey key) {

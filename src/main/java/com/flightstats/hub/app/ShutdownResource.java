@@ -1,5 +1,7 @@
 package com.flightstats.hub.app;
 
+import datadog.trace.api.Trace;
+
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -13,6 +15,7 @@ import javax.ws.rs.core.UriInfo;
 @Path("/shutdown")
 public class ShutdownResource {
 
+    @Trace
     @POST
     public Response shutdown(@Context UriInfo uriInfo) throws Exception {
         ShutdownManager manager = HubProvider.getInstance(ShutdownManager.class);

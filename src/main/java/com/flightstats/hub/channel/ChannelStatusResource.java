@@ -7,6 +7,7 @@ import com.flightstats.hub.dao.ChannelService;
 import com.flightstats.hub.model.*;
 import com.flightstats.hub.util.HubUtils;
 import com.google.common.base.Optional;
+import datadog.trace.api.Trace;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -26,6 +27,7 @@ public class ChannelStatusResource {
     private final static HubUtils hubUtils = HubProvider.getInstance(HubUtils.class);
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
 
+    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLatest(@PathParam("channel") String channel,

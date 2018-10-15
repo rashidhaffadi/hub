@@ -2,6 +2,7 @@ package com.flightstats.hub.app;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flightstats.hub.metrics.InternalTracesResource;
+import datadog.trace.api.Trace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,7 @@ public class InternalPropertiesResource {
 
     public static final String DESCRIPTION = "Get hub properties with links to other hubs in the cluster.";
 
+    @Trace
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response getTraces() {

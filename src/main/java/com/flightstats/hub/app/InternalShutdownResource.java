@@ -3,6 +3,7 @@ package com.flightstats.hub.app;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flightstats.hub.rest.Linked;
+import datadog.trace.api.Trace;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,6 +25,7 @@ public class InternalShutdownResource {
 
     public static final String DESCRIPTION = "See if any server is being shutdown, shutdown a node, and reset the shutdown lock.";
 
+    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@Context UriInfo uriInfo) throws Exception {
@@ -44,11 +46,13 @@ public class InternalShutdownResource {
         return Response.ok(links.build()).build();
     }
 
+    @Trace
     @POST
     public Response shutdown(@Context UriInfo uriInfo) throws Exception {
         return LocalHostOnly.getResponse(uriInfo, () -> getManager().shutdown(true));
     }
 
+    @Trace
     @POST
     @Path("resetLock")
     public Response resetLock(@Context UriInfo uriInfo) throws Exception {

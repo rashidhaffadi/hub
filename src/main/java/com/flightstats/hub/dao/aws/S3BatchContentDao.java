@@ -17,6 +17,8 @@ import com.google.common.base.Optional;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.opentracing.Scope;
+import io.opentracing.Tracer;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -51,6 +53,8 @@ public class S3BatchContentDao implements ContentDao {
     private S3BucketName s3BucketName;
     @Inject
     private MetricsService metricsService;
+    @Inject
+    private Tracer tracer;
 
     @Override
     public ContentKey insert(String channelName, Content content) throws Exception {
@@ -59,19 +63,21 @@ public class S3BatchContentDao implements ContentDao {
 
     @Override
     public Content get(String channelName, ContentKey key) {
-        try {
-            return getS3Object(channelName, key);
-        } catch (SocketTimeoutException | SocketException e) {
-            logger.warn("Socket Exception : unable to read " + channelName + " " + key + " " + e.getMessage() + " " + e.getClass());
+        try (Scope scope = tracer.buildSpan("s3_batch_content_dao.get").startActive(true)) {
             try {
                 return getS3Object(channelName, key);
-            } catch (Exception e2) {
-                logger.warn("unable to read second time " + channelName + " " + key + " " + e.getMessage(), e2);
-                return null;
+            } catch (SocketTimeoutException | SocketException e) {
+                logger.warn("Socket Exception : unable to read " + channelName + " " + key + " " + e.getMessage() + " " + e.getClass());
+                try {
+                    return getS3Object(channelName, key);
+                } catch (Exception e2) {
+                    logger.warn("unable to read second time " + channelName + " " + key + " " + e.getMessage(), e2);
+                    return null;
+                }
+            } catch (Exception e) {
+                logger.warn("unable to read " + channelName + " " + key, e);
+                throw new RuntimeException(e);
             }
-        } catch (Exception e) {
-            logger.warn("unable to read " + channelName + " " + key, e);
-            throw new RuntimeException(e);
         }
     }
 

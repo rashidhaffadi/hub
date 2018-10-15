@@ -8,6 +8,7 @@ import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.app.HubVersion;
 import com.flightstats.hub.channel.LinkBuilder;
 import com.flightstats.hub.util.TimeUtil;
+import datadog.trace.api.Trace;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
@@ -29,6 +30,7 @@ public class HealthResource {
     private static final HubHealthCheck healthCheck = HubProvider.getInstance(HubHealthCheck.class);
     private static final HubVersion hubVersion = HubProvider.getInstance(HubVersion.class);
 
+    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkHealth() {

@@ -8,6 +8,8 @@ import com.flightstats.hub.metrics.ActiveTraces;
 import com.flightstats.hub.metrics.Traces;
 import com.flightstats.hub.model.*;
 import com.google.common.base.Optional;
+import io.opentracing.Scope;
+import io.opentracing.Tracer;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,8 @@ public class SpokeReadContentDao implements ContentDao {
 
     @Inject
     private RemoteSpokeStore spokeStore;
+    @Inject
+    private Tracer tracer;
 
     @Override
     public ContentKey insert(String channelName, Content content) throws Exception {
@@ -30,10 +34,12 @@ public class SpokeReadContentDao implements ContentDao {
 
     @Override
     public SortedSet<ContentKey> insert(BulkContent bulkContent) throws Exception {
-        return SpokeContentDao.insert(bulkContent, (baos) -> {
-            String channel = bulkContent.getChannel();
-            return spokeStore.insert(SpokeStore.READ, channel, baos.toByteArray(), Cluster.getLocalServer(), ActiveTraces.getLocal(), "bulkKey", channel);
-        });
+        try (Scope scope = tracer.buildSpan("spoke_read_content_dao.insert").startActive(true)) {
+            return SpokeContentDao.insert(bulkContent, (baos) -> {
+                String channel = bulkContent.getChannel();
+                return spokeStore.insert(SpokeStore.READ, channel, baos.toByteArray(), Cluster.getLocalServer(), ActiveTraces.getLocal(), "bulkKey", channel);
+            });
+        }
     }
 
     private String getPath(String channelName, ContentKey key) {
@@ -42,16 +48,19 @@ public class SpokeReadContentDao implements ContentDao {
 
     @Override
     public Content get(String channelName, ContentKey key) {
-        String path = getPath(channelName, key);
-        Traces traces = ActiveTraces.getLocal();
-        traces.add("SpokeReadContentDao.read");
-        try {
-            return spokeStore.get(SpokeStore.READ, path, key);
-        } catch (Exception e) {
-            logger.warn("unable to get data: " + path, e);
-            return null;
-        } finally {
-            traces.add("SpokeReadContentDao.read completed");
+        try (Scope scope = tracer.buildSpan("spoke_read_content_dao.get").startActive(true)) {
+            String path = getPath(channelName, key);
+            scope.span().setTag("path", path);
+            Traces traces = ActiveTraces.getLocal();
+            traces.add("SpokeReadContentDao.read");
+            try {
+                return spokeStore.get(SpokeStore.READ, path, key);
+            } catch (Exception e) {
+                logger.warn("unable to get data: " + path, e);
+                return null;
+            } finally {
+                traces.add("SpokeReadContentDao.read completed");
+            }
         }
     }
 

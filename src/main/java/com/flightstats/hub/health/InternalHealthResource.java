@@ -8,6 +8,7 @@ import com.flightstats.hub.metrics.InternalTracesResource;
 import com.flightstats.hub.rest.RestClient;
 import com.flightstats.hub.util.HubUtils;
 import com.sun.jersey.api.client.ClientResponse;
+import datadog.trace.api.Trace;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,6 +26,7 @@ public class InternalHealthResource {
     @Context
     private UriInfo uriInfo;
 
+    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkHealth(@Context UriInfo uriInfo) {
