@@ -323,7 +323,7 @@ public class ChannelContentResource {
     ) throws Exception {
         try (Scope scope = tracer.buildSpan("channel_content_resource.get_by_hash").withTag("channel", channel).startActive(true)) {
             long start = System.currentTimeMillis();
-            scope.span().setTag("channel", channel);
+            scope.span().setTag("aggregation_key", channel);
             ContentKey key = new ContentKey(year, month, day, hour, minute, second, millis, hash);
             scope.span().setTag("content_key", key.toUrl());
             ItemRequest itemRequest = ItemRequest.builder()
