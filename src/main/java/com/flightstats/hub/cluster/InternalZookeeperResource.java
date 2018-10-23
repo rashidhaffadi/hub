@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.util.TimeUtil;
 import com.google.common.primitives.Longs;
-import datadog.trace.api.Trace;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.data.Stat;
@@ -34,14 +33,12 @@ public class InternalZookeeperResource {
     @Context
     private UriInfo uriInfo;
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRoot(@QueryParam("depth") @DefaultValue("1") int depth) {
         return returnData("", depth, 0);
     }
 
-    @Trace
     @GET
     @Path("/{path:.+}")
     @Produces(MediaType.APPLICATION_JSON)

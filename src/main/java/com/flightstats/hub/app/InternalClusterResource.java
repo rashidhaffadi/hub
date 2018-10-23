@@ -8,7 +8,6 @@ import com.flightstats.hub.cluster.DecommissionManager;
 import com.flightstats.hub.cluster.SpokeDecommissionCluster;
 import com.flightstats.hub.cluster.SpokeDecommissionManager;
 import com.flightstats.hub.rest.Linked;
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -34,7 +33,6 @@ public class InternalClusterResource {
     private @Context
     UriInfo uriInfo;
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get() throws Exception {
@@ -71,14 +69,12 @@ public class InternalClusterResource {
         }
     }
 
-    @Trace
     @POST
     @Path("decommission")
     public Response decommission() throws Exception {
         return LocalHostOnly.getResponse(uriInfo, decommissionManager::decommission);
     }
 
-    @Trace
     @POST
     @Path("recommission/{server}")
     public Response recommission(@PathParam("server") String server) throws Exception {

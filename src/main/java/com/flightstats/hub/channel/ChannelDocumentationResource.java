@@ -3,7 +3,6 @@ package com.flightstats.hub.channel;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.dao.ChannelService;
 import com.flightstats.hub.dao.DocumentationDao;
-import datadog.trace.api.Trace;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -27,7 +26,6 @@ public class ChannelDocumentationResource {
     private final static Parser markdownParser = Parser.builder().build();
     private final static HtmlRenderer markdownRenderer = HtmlRenderer.builder().build();
 
-    @Trace
     @GET
     public Response get(@PathParam("channel") String channel, @HeaderParam("accept") String accept) {
         if (!channelService.channelExists(channel)) {
@@ -53,7 +51,6 @@ public class ChannelDocumentationResource {
         return markdownRenderer.render(document);
     }
 
-    @Trace
     @PUT
     public Response put(@PathParam("channel") String channel, String content) {
         if (!channelService.channelExists(channel)) {
@@ -68,7 +65,6 @@ public class ChannelDocumentationResource {
         }
     }
 
-    @Trace
     @DELETE
     public Response delete(@PathParam("channel") String channel) {
         if (!channelService.channelExists(channel)) {

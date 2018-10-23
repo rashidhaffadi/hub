@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.model.ContentPath;
-import datadog.trace.api.Trace;
 import org.joda.time.DateTime;
 
 import javax.ws.rs.*;
@@ -32,7 +31,6 @@ public class InternalWebhookResource {
     @Context
     private UriInfo uriInfo;
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get() {
@@ -55,7 +53,6 @@ public class InternalWebhookResource {
         return Response.ok(root).build();
     }
 
-    @Trace
     @GET
     @Path("/stale/{age}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -78,7 +75,6 @@ public class InternalWebhookResource {
         return Response.ok(root).build();
     }
 
-    @Trace
     @GET
     @Path("/configs")
     @Produces(MediaType.APPLICATION_JSON)
@@ -101,7 +97,6 @@ public class InternalWebhookResource {
         return Response.ok(root).build();
     }
 
-    @Trace
     @GET
     @Path("/errors")
     @Produces(MediaType.APPLICATION_JSON)
@@ -131,7 +126,6 @@ public class InternalWebhookResource {
         return UriBuilder.fromUri(uriInfo.getBaseUri()).path("webhook").path(webhook.getName()).build();
     }
 
-    @Trace
     @PUT
     @Path("/run/{name}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -142,7 +136,6 @@ public class InternalWebhookResource {
         return Response.status(400).build();
     }
 
-    @Trace
     @PUT
     @Path("/delete/{name}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -151,7 +144,6 @@ public class InternalWebhookResource {
         return Response.ok().build();
     }
 
-    @Trace
     @GET
     @Path("/count")
     public Response count() {

@@ -7,7 +7,6 @@ import com.flightstats.hub.model.BulkContent;
 import com.flightstats.hub.model.ChannelConfig;
 import com.flightstats.hub.model.Content;
 import com.flightstats.hub.model.ContentKey;
-import datadog.trace.api.Trace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +37,6 @@ public class ProviderResource {
         }
     }
 
-    @Trace
     @POST
     @Produces(MediaType.TEXT_PLAIN)
     public Response insertValue(@HeaderParam("channelName") final String channelName,
@@ -65,7 +63,6 @@ public class ProviderResource {
         }
     }
 
-    @Trace
     @POST
     @Consumes("multipart/*")
     @Produces(MediaType.APPLICATION_JSON)

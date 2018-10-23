@@ -11,7 +11,6 @@ import com.flightstats.hub.model.ContentKey;
 import com.flightstats.hub.model.MinutePath;
 import com.flightstats.hub.rest.RestClient;
 import com.sun.jersey.api.client.ClientResponse;
-import datadog.trace.api.Trace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +52,6 @@ public class S3BatchResource {
     /**
      * This gets called back for channels to support S3 batching.
      */
-    @Trace
     @POST
     public Response post(@PathParam("channel") String channel, String data) {
         try {

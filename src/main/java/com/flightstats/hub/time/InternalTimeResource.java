@@ -5,7 +5,6 @@ import com.flightstats.hub.app.HubProvider;
 import com.flightstats.hub.app.LocalHostOnly;
 import com.flightstats.hub.metrics.InternalTracesResource;
 import com.flightstats.hub.util.TimeUtil;
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -25,7 +24,6 @@ public class InternalTimeResource {
     @Context
     private UriInfo uriInfo;
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get() {
@@ -60,7 +58,6 @@ public class InternalTimeResource {
         link.put("href", value);
     }
 
-    @Trace
     @GET
     @Path("/millis")
     public Response getMillis() {
@@ -70,7 +67,6 @@ public class InternalTimeResource {
         return Response.ok(TimeUtil.now().getMillis()).build();
     }
 
-    @Trace
     @PUT
     @Path("/remote")
     public Response remote() throws Exception {
@@ -84,21 +80,18 @@ public class InternalTimeResource {
         });
     }
 
-    @Trace
     @GET
     @Path("/remote")
     public Response getRemote() {
         return Response.ok(timeService.getRemoteNow().getMillis()).build();
     }
 
-    @Trace
     @PUT
     @Path("/local")
     public Response ok() throws Exception {
         return setRemote(false);
     }
 
-    @Trace
     @GET
     @Path("/local")
     public Response getLocal() {

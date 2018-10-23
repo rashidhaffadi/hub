@@ -13,7 +13,6 @@ import com.flightstats.hub.model.ContentKey;
 import com.flightstats.hub.util.HubUtils;
 import com.google.common.base.Optional;
 import com.google.inject.TypeLiteral;
-import datadog.trace.api.Trace;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,6 @@ public class InternalChannelResource {
     @Context
     private UriInfo uriInfo;
 
-    @Trace
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@Context UriInfo uriInfo) throws Exception {
@@ -64,7 +62,6 @@ public class InternalChannelResource {
         return Response.ok(root).build();
     }
 
-    @Trace
     @GET
     @Path("/refresh")
     @Produces(MediaType.APPLICATION_JSON)
@@ -81,7 +78,6 @@ public class InternalChannelResource {
         }
     }
 
-    @Trace
     @Path("{channel}")
     @DELETE
     public Response delete(@PathParam("channel") final String channelName) throws Exception {
@@ -97,7 +93,6 @@ public class InternalChannelResource {
         return ChannelResource.deletion(channelName);
     }
 
-    @Trace
     @GET
     @Path("/stale/{age}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -131,7 +126,6 @@ public class InternalChannelResource {
         return UriBuilder.fromUri(uriInfo.getBaseUri()).path("channel").path(channelConfig.getDisplayName()).build();
     }
 
-    @Trace
     @GET
     @Path("/stale/{age}/{owner}")
     @Produces(MediaType.APPLICATION_JSON)

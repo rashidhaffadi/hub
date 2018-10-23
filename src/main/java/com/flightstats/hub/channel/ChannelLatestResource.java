@@ -6,7 +6,6 @@ import com.flightstats.hub.dao.ChannelService;
 import com.flightstats.hub.model.*;
 import com.flightstats.hub.util.TimeUtil;
 import com.google.common.base.Optional;
-import datadog.trace.api.Trace;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -30,7 +29,6 @@ public class ChannelLatestResource {
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
     private final static ChannelService channelService = HubProvider.getInstance(ChannelService.class);
 
-    @Trace
     @GET
     public Response getLatest(@PathParam("channel") String channel,
                               @QueryParam("stable") @DefaultValue("true") boolean stable,
@@ -59,7 +57,6 @@ public class ChannelLatestResource {
         }
     }
 
-    @Trace
     @GET
     @Path("/{count}")
     @Produces({MediaType.APPLICATION_JSON, "multipart/*", "application/zip"})

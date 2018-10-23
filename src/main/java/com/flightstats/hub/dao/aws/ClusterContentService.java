@@ -133,6 +133,7 @@ public class ClusterContentService implements ContentService {
         try (Scope scope = tracer.buildSpan("cluster_content_service.get").startActive(true)) {
             logger.trace("fetching {} from channel {} ", key.toString(), channelName);
             ChannelConfig channel = channelService.getCachedChannelConfig(channelName);
+            scope.span().setTag("storage", channel.getStorage().toLowerCase());
             if (!remoteOnly && key.getTime().isAfter(getSpokeTtlTime(channelName))) {
                 Content content = spokeWriteContentDao.get(channelName, key);
                 if (content != null) {
@@ -143,15 +144,12 @@ public class ClusterContentService implements ContentService {
             Content content;
             if (channel.isSingle()) {
                 content = s3SingleContentDao.get(channelName, key);
-                scope.span().setTag("storage", "single");
             } else if (channel.isBatch()) {
-                scope.span().setTag("storage", "batch");
                 content = spokeReadContentDao.get(channelName, key);
                 if (content == null) {
                     content = getFromS3BatchAndStoreInReadCache(channelName, key);
                 }
             } else {
-                scope.span().setTag("storage", "both");
                 content = spokeReadContentDao.get(channelName, key);
                 if (content == null) {
                     content = getFromS3BatchAndStoreInReadCache(channelName, key);
