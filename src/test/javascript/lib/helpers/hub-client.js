@@ -258,10 +258,13 @@ const isClusteredHubNode = async () => {
     const response = await hubClientGet(url, headers);
     const properties = fromObjectPath(['body', 'properties'], response) || {};
     if (properties['hub.type'] === 'aws') return true;
+    console.log('properties[hub.type]', properties['hub.type']);
     const servers = fromObjectPath(['body', 'servers'], response) || [];
+    console.log('servers', servers);
     const server = fromObjectPath(['body', 'server'], response) || '';
+    console.log('server', server);
     const indeterminate = !server || !servers.length;
-    const single = servers.length === 1 && getHostname(servers[0]) === getHostname(server);
+    const single = servers.length === 1;
     return !indeterminate && !single;
 };
 
