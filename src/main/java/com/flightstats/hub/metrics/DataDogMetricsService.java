@@ -8,6 +8,7 @@ import com.flightstats.hub.rest.RestClient;
 import com.sun.jersey.api.client.ClientResponse;
 import com.timgroup.statsd.Event;
 import com.timgroup.statsd.StatsDClient;
+import com.timgroup.statsd.NonBlockingStatsDClient;
 import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 class DataDogMetricsService implements MetricsService {
     private final static Logger logger = LoggerFactory.getLogger(DataDogMetricsService.class);
-    private final static StatsDClient statsd = DataDog.statsd;
+    private final static StatsDClient statsd = new NonBlockingStatsDClient("hub.test", "10.134.252.179", 8125);
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
 
     @Override
