@@ -22,6 +22,7 @@ public class RequestUriFilter implements ContainerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(RequestUriFilter.class);
 
     @Override
+
     public void filter(ContainerRequestContext request) throws IOException {
         MultivaluedMap<String, String> headers = request.getHeaders();
         UriInfo uriInfo = request.getUriInfo();

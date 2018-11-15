@@ -20,7 +20,7 @@ public class DataDog {
     }
 
     public final static StatsDClient statsd = HubProperties.getProperty("data_dog.enable", false) ?
-            new NonBlockingStatsDClient("hub", "localhost", 8125)
+            new NonBlockingStatsDClient("hub", "192.168.0.27", 8125)
             : new NoOpStatsDClient();
 
 

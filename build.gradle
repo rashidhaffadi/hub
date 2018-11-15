@@ -112,8 +112,6 @@ dependencies {
 
     compile 'com.atlassian.commonmark:commonmark:0.10.0'
 
-    compile group: 'com.timgroup', name: 'java-statsd-client', version: '3.0.1'
-
     testCompile 'com.sparkjava:spark-core:2.7.1'
     testCompile 'junit:junit:4.+'
     testCompile "org.mockito:mockito-all:1.+"

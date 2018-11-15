@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 class DataDogMetricsService implements MetricsService {
     private final static Logger logger = LoggerFactory.getLogger(DataDogMetricsService.class);
-    private final static StatsDClient statsd = new NonBlockingStatsDClient("hub.test", "10.134.252.179", 8125);
+    private final static StatsDClient statsd = DataDog.statsd;
     private final static ObjectMapper mapper = HubProvider.getInstance(ObjectMapper.class);
 
     @Override
