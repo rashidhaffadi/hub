@@ -14,13 +14,13 @@ import static com.flightstats.hub.app.HubServices.TYPE.AFTER_HEALTHY_START;
 
 @Singleton
 public class DataDog {
-
+    private final static String statsDHost = HubProperties.getProperty("statsd.hostname", "localhost");
     static {
         HubServices.register(new DataDogService(), AFTER_HEALTHY_START);
     }
 
     public final static StatsDClient statsd = HubProperties.getProperty("data_dog.enable", false) ?
-            new NonBlockingStatsDClient("hub", "192.168.0.27", 8125)
+            new NonBlockingStatsDClient("hub", statsDHost, 8125)
             : new NoOpStatsDClient();
 
 
