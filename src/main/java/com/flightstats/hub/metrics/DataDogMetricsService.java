@@ -8,7 +8,6 @@ import com.flightstats.hub.rest.RestClient;
 import com.sun.jersey.api.client.ClientResponse;
 import com.timgroup.statsd.Event;
 import com.timgroup.statsd.StatsDClient;
-import com.timgroup.statsd.NonBlockingStatsDClient;
 import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
