@@ -22,6 +22,7 @@ import com.flightstats.hub.spoke.SpokeClusterRegister;
 import com.flightstats.hub.spoke.SpokeFinalCheck;
 import com.flightstats.hub.spoke.SpokeReadContentDao;
 import com.flightstats.hub.spoke.SpokeStore;
+import com.flightstats.hub.spoke.SpokeStoreConfig;
 import com.flightstats.hub.spoke.SpokeWriteContentDao;
 import com.flightstats.hub.time.NtpMonitor;
 import com.flightstats.hub.time.TimeService;
@@ -183,6 +184,17 @@ public class HubBindings extends AbstractModule {
                 .channelThreads(channelThreads)
                 .queryThreads(channelThreads * 2)
                 .endpointUrlGenerator(channelName -> HubProperties.getAppUrl() + "internal/s3Verifier/" + channelName)
+                .build();
+    }
+
+    @Named("spokeWriteStoreConfig")
+    @Singleton
+    @Provides
+    public static SpokeStoreConfig spokeWriteStoreConfig() {
+        return SpokeStoreConfig.builder()
+                .type(SpokeStore.WRITE)
+                .path(HubProperties.getSpokePath(SpokeStore.WRITE))
+                .ttlMinutes(HubProperties.getSpokeTtlMinutes(SpokeStore.WRITE))
                 .build();
     }
 
