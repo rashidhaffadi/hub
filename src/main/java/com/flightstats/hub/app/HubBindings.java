@@ -8,7 +8,7 @@ import com.flightstats.hub.channel.ChannelValidator;
 import com.flightstats.hub.cluster.*;
 import com.flightstats.hub.dao.ChannelService;
 import com.flightstats.hub.dao.ContentDao;
-import com.flightstats.hub.dao.aws.S3VerifierConfig;
+import com.flightstats.hub.dao.aws.s3verifier.VerifierConfig;
 import com.flightstats.hub.health.HubHealthCheck;
 import com.flightstats.hub.metrics.DelegatingMetricsService;
 import com.flightstats.hub.metrics.MetricsRunner;
@@ -159,25 +159,25 @@ public class HubBindings extends AbstractModule {
     @Named("s3VerifierChannelThreadPool")
     @Singleton
     @Provides
-    public static ExecutorService channelThreadPool(@Named("s3VerifierConfig") S3VerifierConfig s3VerifierConfig) {
-        return Executors.newFixedThreadPool(s3VerifierConfig.getChannelThreads(), new ThreadFactoryBuilder().setNameFormat("S3VerifierChannel-%d").build());
+    public static ExecutorService channelThreadPool(@Named("s3VerifierConfig") VerifierConfig verifierConfig) {
+        return Executors.newFixedThreadPool(verifierConfig.getChannelThreads(), new ThreadFactoryBuilder().setNameFormat("S3VerifierChannel-%d").build());
     }
 
     @Named("s3VerifierQueryThreadPool")
     @Singleton
     @Provides
     public
-    static ExecutorService queryThreadPool(@Named("s3VerifierConfig") S3VerifierConfig s3VerifierConfig) {
-        return Executors.newFixedThreadPool(s3VerifierConfig.getQueryThreads(), new ThreadFactoryBuilder().setNameFormat("S3VerifierQuery-%d").build());
+    static ExecutorService queryThreadPool(@Named("s3VerifierConfig") VerifierConfig verifierConfig) {
+        return Executors.newFixedThreadPool(verifierConfig.getQueryThreads(), new ThreadFactoryBuilder().setNameFormat("S3VerifierQuery-%d").build());
     }
 
 
     @Named("s3VerifierConfig")
     @Singleton
     @Provides
-    public static S3VerifierConfig s3VerifierConfig() {
+    public static VerifierConfig s3VerifierConfig() {
         int channelThreads = HubProperties.getProperty("s3Verifier.channelThreads", 3);
-        return S3VerifierConfig.builder()
+        return VerifierConfig.builder()
                 .enabled(HubProperties.getProperty("s3Verifier.run", true))
                 .baseTimeoutMinutes(HubProperties.getProperty("s3Verifier.baseTimeoutMinutes", 2))
                 .offsetMinutes(HubProperties.getProperty("s3Verifier.offsetMinutes", 15))
