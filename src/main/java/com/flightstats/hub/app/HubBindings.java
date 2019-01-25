@@ -178,7 +178,8 @@ public class HubBindings extends AbstractModule {
         int channelThreads = HubProperties.getProperty("s3Verifier.channelThreads", 3);
         return VerifierConfig.builder()
                 .enabled(HubProperties.getProperty("s3Verifier.run", true))
-                .baseTimeoutMinutes(HubProperties.getProperty("s3Verifier.baseTimeoutMinutes", 2))
+                .baseTimeoutValue(HubProperties.getProperty("s3Verifier.baseTimeoutMinutes", 2))
+                .baseTimeoutUnit(TimeUnit.MINUTES)
                 .offsetMinutes(HubProperties.getProperty("s3Verifier.offsetMinutes", 15))
                 .channelThreads(channelThreads)
                 .queryThreads(channelThreads * 2)
