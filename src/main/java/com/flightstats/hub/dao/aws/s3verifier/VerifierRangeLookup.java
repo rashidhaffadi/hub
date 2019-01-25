@@ -22,7 +22,7 @@ public class VerifierRangeLookup {
     @Inject
     public VerifierRangeLookup(LastContentPath lastContentPath,
                                ChannelService channelService,
-                               @Named("s3VerifierConfig") VerifierConfig verifierConfig,
+                               VerifierConfig verifierConfig,
                                @Named("spokeWriteStoreConfig") SpokeStoreConfig spokeWriteStoreConfig) {
         this.lastContentPath = lastContentPath;
         this.channelService = channelService;

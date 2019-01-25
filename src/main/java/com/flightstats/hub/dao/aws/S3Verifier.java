@@ -67,7 +67,7 @@ public class S3Verifier {
                       MetricsService metricsService,
                       MissingContentFinder missingContentFinder,
                       VerifierRangeLookup verifierRangeLookup,
-                      @Named("s3VerifierConfig") VerifierConfig verifierConfig,
+                      VerifierConfig verifierConfig,
                       @Named("s3VerifierChannelThreadPool") ExecutorService channelThreadPool) {
         this.lastContentPath = lastContentPath;
         this.channelService = channelService;

@@ -159,7 +159,7 @@ public class HubBindings extends AbstractModule {
     @Named("s3VerifierChannelThreadPool")
     @Singleton
     @Provides
-    public static ExecutorService channelThreadPool(@Named("s3VerifierConfig") VerifierConfig verifierConfig) {
+    public static ExecutorService channelThreadPool(VerifierConfig verifierConfig) {
         return Executors.newFixedThreadPool(verifierConfig.getChannelThreads(), new ThreadFactoryBuilder().setNameFormat("S3VerifierChannel-%d").build());
     }
 
@@ -167,12 +167,11 @@ public class HubBindings extends AbstractModule {
     @Singleton
     @Provides
     public
-    static ExecutorService queryThreadPool(@Named("s3VerifierConfig") VerifierConfig verifierConfig) {
+    static ExecutorService queryThreadPool(VerifierConfig verifierConfig) {
         return Executors.newFixedThreadPool(verifierConfig.getQueryThreads(), new ThreadFactoryBuilder().setNameFormat("S3VerifierQuery-%d").build());
     }
 
 
-    @Named("s3VerifierConfig")
     @Singleton
     @Provides
     public static VerifierConfig s3VerifierConfig() {

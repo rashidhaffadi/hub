@@ -35,7 +35,7 @@ public class MissingContentFinder {
     @Inject
     public MissingContentFinder(@Named(ContentDao.WRITE_CACHE) ContentDao spokeWriteContentDao,
                                 @Named(ContentDao.SINGLE_LONG_TERM) ContentDao s3SingleContentDao,
-                                @Named("s3VerifierConfig") VerifierConfig verifierConfig,
+                                VerifierConfig verifierConfig,
                                 MetricsService metricsService,
                                 @Named("s3VerifierQueryThreadPool") ExecutorService queryThreadPool) {
         this.spokeWriteContentDao = spokeWriteContentDao;
