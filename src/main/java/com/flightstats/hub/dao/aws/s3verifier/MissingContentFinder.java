@@ -50,8 +50,8 @@ public class MissingContentFinder {
 
     public SortedSet<ContentKey> getMissing(MinutePath startPath, MinutePath endPath, String channelName) {
         TimeQuery timeQuery = buildTimeQuery(channelName, startPath, endPath);
-        CompletableFuture<QueryResult> spokeQueryResults = getContentKeys(ActiveTraces.getLocal(), () -> spokeWriteContentDao.queryByTime(timeQuery));
-        CompletableFuture<QueryResult> s3QueryResults = getContentKeys(ActiveTraces.getLocal(), () -> s3SingleContentDao.queryByTime(timeQuery));
+        CompletableFuture<QueryResult> spokeQueryResults = getContentKeyFuture(() -> spokeWriteContentDao.queryByTime(timeQuery));
+        CompletableFuture<QueryResult> s3QueryResults = getContentKeyFuture(() -> s3SingleContentDao.queryByTime(timeQuery));
 
         try {
             CompletableFuture
@@ -104,7 +104,8 @@ public class MissingContentFinder {
         return timeout + timeoutAdjustmentForExcessiveDelays;
     }
 
-    private CompletableFuture<QueryResult> getContentKeys(Traces traces, Supplier<SortedSet<ContentKey>> callable) {
+    private CompletableFuture<QueryResult> getContentKeyFuture(Supplier<SortedSet<ContentKey>> callable) {
+        Traces traces = ActiveTraces.getLocal();
         return CompletableFuture.supplyAsync(() -> {
             ActiveTraces.setLocal(traces);
             QueryResult queryResult = new QueryResult(1);
